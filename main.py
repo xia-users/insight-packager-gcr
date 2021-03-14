@@ -26,7 +26,7 @@ client.setup_logging()
 
 
 @app.route('/', methods=['GET', 'POST'])
-def insight_receiver():
+def insight_packager():
     packager = service_factory(object_config, global_connectors)
     if request.method == 'GET':
         return render_template("index.html"), 200
