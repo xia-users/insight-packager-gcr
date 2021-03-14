@@ -16,20 +16,20 @@ setenv: ## Setting deploy environement values
 	gcloud config set run/platform $${CLOUD_RUN_PLATFORM};
 
 init-users:
-	gcloud iam service-accounts create ${{xia.sa-name}} \
+	gcloud iam service-accounts create gcr-xia-packager \
 		--display-name "Cloud Run Insight Cleaner";
 
 init-roles:
 	@PROJECT_ID=$(shell gcloud config list --format 'value(core.project)'); \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
-		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
+		--member=serviceAccount:gcr-xia-packager@$${PROJECT_ID}.iam.gserviceaccount.com \
 		--role=roles/logging.logWriter; \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
-		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/${{xia.fs-role}}; \
+		--member=serviceAccount:gcr-xia-packager@$${PROJECT_ID}.iam.gserviceaccount.com \
+		--role=roles/storage.objectAdmin; \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
-		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/${{xia.db-role}};
+		--member=serviceAccount:gcr-xia-packager@$${PROJECT_ID}.iam.gserviceaccount.com \
+		--role=roles/datastore.user;
 
 build:
 	PROJECT_ID=$(shell gcloud config list --format 'value(core.project)'); \
@@ -39,9 +39,9 @@ deploy:
 	PROJECT_ID=$(shell gcloud config list --format 'value(core.project)'); \
 	CLOUD_RUN_REGION=$(shell gcloud config list --format 'value(run.region)'); \
 	CLOUD_RUN_PLATFORM=$(shell gcloud config list --format 'value(run.platform)'); \
-	gcloud run deploy ${{xia.service-name}} \
+	gcloud run deploy xia-packager \
 		--image gcr.io/$${PROJECT_ID}/${{xia.serivce-name}} \
-    	--service-account ${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
+    	--service-account gcr-xia-packager@$${PROJECT_ID}.iam.gserviceaccount.com \
 		--region $${CLOUD_RUN_REGION} \
 		--platform $${CLOUD_RUN_PLATFORM} \
 		--no-allow-unauthenticated; \
