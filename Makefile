@@ -29,7 +29,7 @@ init-roles:
 		--role=roles/${{xia.fs-role}}; \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
 		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/${{xia.pub-role}};
+		--role=roles/${{xia.db-role}};
 
 build:
 	PROJECT_ID=$(shell gcloud config list --format 'value(core.project)'); \
