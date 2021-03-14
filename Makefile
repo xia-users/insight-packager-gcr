@@ -20,18 +20,16 @@ init-users:
 		--display-name "Cloud Run Insight Cleaner";
 
 init-roles:
+	@PROJECT_ID=$(shell gcloud config list --format 'value(core.project)'); \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
 		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/pubsub.publisher; \
+		--role=roles/logging.logWriter; \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
 		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/datastore.user; \
+		--role=roles/${{xia.fs-role}}; \
 	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
 		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/storage.objectAdmin; \
-	gcloud projects add-iam-policy-binding $${PROJECT_ID} \
-		--member=serviceAccount:${{xia.sa-name}}@$${PROJECT_ID}.iam.gserviceaccount.com \
-		--role=roles/logging.logWriter;
+		--role=roles/${{xia.pub-role}};
 
 build:
 	PROJECT_ID=$(shell gcloud config list --format 'value(core.project)'); \
